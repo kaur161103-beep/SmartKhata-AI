@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartKhata AI — FinTech Accounting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#122843;
+    --navy-2:#1b3a5c;
+    --teal:#1f7a6c;
+    --teal-light:#e4f3ef;
+    --amber:#c98a2c;
+    --amber-light:#fbf1e0;
+    --danger:#c0453a;
+    --danger-light:#fbeae8;
+    --bg:#f3f6f9;
+    --card:#ffffff;
+    --ink:#152534;
+    --muted:#64748b;
+    --line:#e3e9ef;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(16,36,58,.06), 0 8px 24px -12px rgba(16,36,58,.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif; margin:0; font-weight:600; color:var(--navy);}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit; font-size:14px;}
+  ::selection{background:#c9e4dd;}
+
+  /* ---------- Login ---------- */
+  #loginScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(1100px 500px at 12% -10%, #1b3a5c 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 110%, #1f7a6c 0%, transparent 55%),
+      var(--navy);
+    padding:24px;
+  }
+  .login-card{
+    width:100%; max-width:400px; background:var(--card); border-radius:16px;
+    padding:38px 34px 30px; box-shadow:0 30px 60px -20px rgba(0,0,0,.5);
+  }
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px; flex:none;
+    background:linear-gradient(135deg,var(--teal),var(--navy-2));
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-family:'Fraunces',serif; font-weight:600; font-size:19px;
+  }
+  .brand-name{font-family:'Fraunces',serif; font-size:20px; font-weight:600; color:var(--navy); line-height:1.1;}
+  .brand-tag{font-size:11.5px; color:var(--muted); letter-spacing:.2px;}
+  .login-card h1{font-size:22px; margin-bottom:4px;}
+  .login-sub{color:var(--muted); font-size:13.5px; margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; color:var(--navy); margin-bottom:6px;}
+  .field input{
+    width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:8px;
+    outline:none; transition:border-color .15s;
+  }
+  .field input:focus{border-color:var(--teal);}
+  .row-between{display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:20px;}
+  .row-between label{display:flex; align-items:center; gap:6px; cursor:pointer;}
+  .btn{
+    border:none; border-radius:8px; padding:11px 18px; font-weight:600; font-size:14px;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    transition:transform .1s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--teal); color:#fff; width:100%;}
+  .btn-primary:hover{background:#19685c;}
+  .btn-ghost{background:transparent; color:var(--navy); border:1.5px solid var(--line); width:100%; margin-top:10px;}
+  .btn-ghost:hover{border-color:var(--teal); color:var(--teal);}
+  .login-note{text-align:center; font-size:11.5px; color:var(--muted); margin-top:18px;}
+
+  /* ---------- App shell ---------- */
+  #app{display:none; min-height:100vh;}
+  #app.show{display:flex;}
+  .sidebar{
+    width:222px; flex:none; background:var(--navy); color:#cfe0ee;
+    display:flex; flex-direction:column; padding:18px 12px; position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .sidebar .brand{padding:6px 8px 18px; border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:10px;}
+  .sidebar .brand-name{color:#fff;}
+  .sidebar .brand-tag{color:#9db6cc;}
+  .nav-item{
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:8px;
+    color:#c4d6e8; font-size:13.6px; font-weight:500; cursor:pointer; margin-bottom:2px;
+    border:none; background:transparent; text-align:left; width:100%;
+  }
+  .nav-item .ic{width:18px; text-align:center; flex:none; font-size:14px;}
+  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .nav-item.active{background:var(--teal); color:#fff;}
+  .nav-sep{height:1px; background:rgba(255,255,255,.1); margin:10px 4px;}
+  .nav-footer{margin-top:auto; padding-top:10px;}
+
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    background:var(--card); border-bottom:1px solid var(--line); padding:14px 26px;
+    display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:5;
+  }
+  .topbar h2{font-size:19px;}
+  .topbar .biz{
+    display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); font-weight:500;
+  }
+  .biz .dot{width:8px; height:8px; border-radius:50%; background:var(--teal);}
+  .content{padding:24px 26px 60px; max-width:1180px; width:100%; margin:0 auto;}
+  .page{display:none;}
+  .page.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .page-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+  .page-head p.sub{color:var(--muted); font-size:13.5px; margin-top:4px;}
+
+  /* ---------- Cards / grid ---------- */
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:14px; margin-bottom:20px;}
+  .stat{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px 17px;
+    box-shadow:var(--shadow);
+  }
+  .stat .label{font-size:12px; color:var(--muted); font-weight:600; margin-bottom:8px;}
+  .stat .value{font-size:23px; font-weight:800; color:var(--navy); font-family:'Fraunces',serif;}
+  .stat .value.pos{color:var(--teal);}
+  .stat .value.neg{color:var(--danger);}
+  .stat .value.warn{color:var(--amber);}
+
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px; box-shadow:var(--shadow); margin-bottom:20px;
+  }
+  .panel h3{font-size:15.5px; margin-bottom:14px;}
+  .two-col{display:grid; grid-template-columns:1.3fr 1fr; gap:18px;}
+  .three-col{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media(max-width:820px){.two-col,.three-col{grid-template-columns:1fr;}}
+
+  /* charts */
+  .bar-chart{display:flex; align-items:flex-end; gap:22px; height:150px; padding-top:10px;}
+  .bar-chart .bar-wrap{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;}
+  .bar-chart .bar{width:100%; max-width:52px; border-radius:6px 6px 0 0; transition:height .4s ease; min-height:3px;}
+  .bar-chart .bar.rev{background:linear-gradient(180deg,#2b9787,var(--teal));}
+  .bar-chart .bar.exp{background:linear-gradient(180deg,#d98f76,var(--danger));}
+  .bar-chart .bar-label{font-size:11.5px; color:var(--muted); font-weight:600;}
+  .bar-chart .bar-val{font-size:11px; color:var(--navy); font-weight:700;}
+
+  .hbar-row{display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:12.5px;}
+  .hbar-row .name{width:110px; flex:none; color:var(--ink); font-weight:600;}
+  .hbar-track{flex:1; background:#eef2f5; border-radius:6px; height:9px; overflow:hidden;}
+  .hbar-fill{height:100%; background:linear-gradient(90deg,var(--teal),#2fa48f); border-radius:6px;}
+  .hbar-row .amt{width:74px; text-align:right; color:var(--muted); flex:none;}
+
+  .empty-note{color:var(--muted); font-size:13px; padding:10px 2px;}
+
+  /* ---------- Tables ---------- */
+  table{width:100%; border-collapse:collapse; font-size:13.4px;}
+  thead th{
+    text-align:left; font-size:11.5px; color:var(--muted); font-weight:700; text-transform:none;
+    padding:9px 12px; border-bottom:1.5px solid var(--line); white-space:nowrap;
+  }
+  tbody td{padding:11px 12px; border-bottom:1px solid var(--line); color:var(--ink); vertical-align:middle;}
+  tbody tr:hover{background:#f8fafb;}
+  .table-wrap{overflow-x:auto;}
+  .badge{padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:700; display:inline-block;}
+  .badge.income{background:var(--teal-light); color:var(--teal);}
+  .badge.expense{background:var(--danger-light); color:var(--danger);}
+  .badge.paid{background:var(--teal-light); color:var(--teal);}
+  .badge.partial{background:var(--amber-light); color:var(--amber);}
+  .badge.pending{background:var(--danger-light); color:var(--danger);}
+  .link-del{color:var(--danger); font-size:12px; font-weight:600; background:none; border:none;}
+
+  .btn-sm{padding:8px 14px; font-size:13px; border-radius:7px;}
+  .btn-teal{background:var(--teal); color:#fff;}
+  .btn-teal:hover{background:#19685c;}
+  .btn-outline{background:#fff; border:1.5px solid var(--line); color:var(--navy);}
+  .btn-outline:hover{border-color:var(--teal); color:var(--teal);}
+  .btn-navy{background:var(--navy); color:#fff;}
+  .btn-navy:hover{background:var(--navy-2);}
+  select.filter, .period-select{
+    padding:8px 10px; border:1.5px solid var(--line); border-radius:7px; background:#fff; color:var(--ink);
+  }
+  .toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+
+  /* ---------- AI box ---------- */
+  .ai-box{
+    background:linear-gradient(135deg,#0f2038,var(--navy-2)); border-radius:12px; padding:20px 22px; color:#fff; margin-bottom:20px;
+  }
+  .ai-box h3{color:#fff; display:flex; align-items:center; gap:8px; font-size:15.5px;}
+  .ai-box .spark{color:#6be0c4;}
+  .ai-box p{color:#b7cadd; font-size:12.8px; margin:6px 0 14px; line-height:1.5;}
+  .ai-input-row{display:flex; gap:10px; margin-bottom:12px;}
+  .ai-input-row textarea{
+    flex:1; border-radius:8px; border:1.5px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
+    color:#fff; padding:11px 12px; resize:none; min-height:44px; outline:none;
+  }
+  .ai-input-row textarea::placeholder{color:#8fa4ba;}
+  .ai-result{display:none; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:14px 16px; margin-top:6px;}
+  .ai-result.show{display:block;}
+  .ai-result-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;}
+  .ai-result-grid div .k{font-size:10.5px; color:#8fa4ba; font-weight:600; margin-bottom:3px;}
+  .ai-result-grid div .v{font-size:14.5px; font-weight:700; color:#fff;}
+  @media(max-width:700px){.ai-result-grid{grid-template-columns:repeat(2,1fr);}}
+
+  /* ---------- Forms / Modal ---------- */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(10,20,32,.5); z-index:50;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal{
+    background:#fff; border-radius:14px; width:100%; max-width:460px; max-height:88vh; overflow-y:auto;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,.4);
+  }
+  .modal-head{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--line);}
+  .modal-head h3{font-size:16px;}
+  .modal-close{background:none; border:none; font-size:20px; color:var(--muted); line-height:1;}
+  .modal-body{padding:20px 22px;}
+  .modal-body .field{margin-bottom:14px;}
+  .modal-body .field label{display:block; font-size:12px; font-weight:700; color:var(--navy); margin-bottom:6px;}
+  .modal-body input, .modal-body select{
+    width:100%; padding:10px 11px; border:1.5px solid var(--line); border-radius:8px; outline:none;
+  }
+  .modal-body input:focus, .modal-body select:focus{border-color:var(--teal);}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .modal-actions{display:flex; gap:10px; margin-top:6px;}
+  .modal-actions .btn{flex:1;}
+
+  /* invoice */
+  .invoice-items th, .invoice-items td{font-size:12.8px;}
+  .invoice-items input{padding:7px 8px; border:1.5px solid var(--line); border-radius:6px; width:100%;}
+  .item-remove{background:none; border:none; color:var(--danger); font-size:15px;}
+  .invoice-preview{
+    background:#fbfcfd; border:1.5px dashed var(--line); border-radius:10px; padding:22px;
+  }
+  .inv-total-row{display:flex; justify-content:space-between; padding:7px 0; font-size:13.5px; color:var(--muted);}
+  .inv-total-row.grand{border-top:1.5px solid var(--line); margin-top:6px; padding-top:12px; font-size:16px; font-weight:800; color:var(--navy);}
+  .inv-total-row span:last-child{color:var(--ink); font-weight:600;}
+  .inv-total-row.grand span{color:var(--navy);}
+
+  .kv-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; font-size:13px;}
+  .kv-grid .k{color:var(--muted); font-size:11.5px; font-weight:600; margin-bottom:3px;}
+  .kv-grid .v{font-weight:700; color:var(--ink);}
+
+  .toggle{position:relative; width:42px; height:24px; flex:none;}
+  .toggle input{opacity:0; width:0; height:0;}
+  .toggle .track{position:absolute; inset:0; background:#d7dee5; border-radius:999px; transition:.2s; cursor:pointer;}
+  .toggle .track:before{content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .toggle input:checked + .track{background:var(--teal);}
+  .toggle input:checked + .track:before{transform:translateX(18px);}
+
+  .settings-row{display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line);}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .t{font-size:13.6px; font-weight:600; color:var(--ink);}
+  .settings-row .d{font-size:12px; color:var(--muted); margin-top:2px;}
+
+  .toast{
+    position:fixed; bottom:24px; right:24px; background:var(--navy); color:#fff; padding:13px 20px;
+    border-radius:9px; font-size:13.5px; font-weight:600; box-shadow:0 14px 30px -10px rgba(0,0,0,.4);
+    z-index:100; display:flex; align-items:center; gap:8px; transform:translateY(20px); opacity:0; transition:.25s;
+  }
+  .toast.show{transform:none; opacity:1;}
+
+  .forecast-chart{display:flex; align-items:flex-end; gap:14px; height:140px; padding-top:10px;}
+  .forecast-chart .bar-wrap{flex:1;}
+  .forecast-chart .bar{background:linear-gradient(180deg,#3aa7c4,var(--navy-2)); width:100%; border-radius:6px 6px 0 0;}
+
+  @media(max-width:900px){
+    .sidebar{position:fixed; left:-230px; z-index:40; transition:left .2s;}
+    .sidebar.open{left:0;}
+    .menu-btn{display:inline-flex !important;}
+  }
+  .menu-btn{display:none; background:none; border:none; font-size:20px; color:var(--navy); margin-right:8px;}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand-name">SmartKhata AI</div>
+        <div class="brand-tag">Automate your accounts. Grow your business.</div>
+      </div>
+    </div>
+    <h1>Welcome back</h1>
+    <p class="login-sub">Sign in to your accounting workspace.</p>
+    <div class="field">
+      <label>Email / Mobile</label>
+      <input type="text" placeholder="owner@greenmart.in" id="loginEmail">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••" id="loginPass">
+    </div>
+    <div class="row-between">
+      <label><input type="checkbox" checked> Remember me</label>
+      <span style="color:var(--teal); font-weight:600; cursor:pointer;">Forgot password?</span>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">Login</button>
+    <button class="btn btn-ghost" onclick="doLogin()">Use Demo Login</button>
+    <p class="login-note">Prototype only — no real financial data is transmitted.</p>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand-name">SmartKhata AI</div>
+        <div class="brand-tag">FinTech Accounting</div>
+      </div>
+    </div>
+    <button class="nav-item active" data-page="dashboard"><span class="ic">▣</span> Dashboard</button>
+    <button class="nav-item" data-page="transactions"><span class="ic">⇄</span> Transactions</button>
+    <button class="nav-item" data-page="expenses"><span class="ic">▾</span> Expenses</button>
+    <button class="nav-item" data-page="invoices"><span class="ic">▤</span> Invoices</button>
+    <button class="nav-item" data-page="customers"><span class="ic">♙</span> Customers</button>
+    <button class="nav-item" data-page="suppliers"><span class="ic">♜</span> Suppliers</button>
+    <button class="nav-item" data-page="gst"><span class="ic">₹</span> GST</button>
+    <button class="nav-item" data-page="reports"><span class="ic">▥</span> Reports</button>
+    <button class="nav-item" data-page="insights"><span class="ic">✦</span> AI Insights</button>
+    <div class="nav-sep"></div>
+    <button class="nav-item" data-page="settings"><span class="ic">⚙</span> Settings</button>
+    <div class="nav-footer">
+      <button class="nav-item" onclick="doLogout()"><span class="ic">↪</span> Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <h2 id="pageTitle">Dashboard</h2>
+      </div>
+      <div class="biz"><span class="dot"></span><span id="topBizName">GreenMart Retail</span></div>
+    </header>
+
+    <div class="content">
+
+      <!-- ---------- DASHBOARD ---------- -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-head">
+          <div><p class="sub">Live overview of your business finances.</p></div>
+          <button class="btn btn-sm btn-teal" onclick="openTxModal()">+ Add Transaction</button>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="label">Revenue</div><div class="value pos" id="statRevenue">₹0</div></div>
+          <div class="stat"><div class="label">Expenses</div><div class="value neg" id="statExpenses">₹0</div></div>
+          <div class="stat"><div class="label">Net Profit</div><div class="value" id="statProfit">₹0</div></div>
+          <div class="stat"><div class="label">Receivables</div><div class="value warn" id="statReceivables">₹0</div></div>
+          <div class="stat"><div class="label">Payables</div><div class="value warn" id="statPayables">₹0</div></div>
+          <div class="stat"><div class="label">Cash Balance</div><div class="value" id="statCash">₹0</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Monthly revenue vs expenses</h3>
+            <div class="bar-chart" id="revExpChart"></div>
+          </div>
+          <div class="panel">
+            <h3>Expense categories</h3>
+            <div id="expCatChart"><p class="empty-note">Add an expense to see the breakdown.</p></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Profit trend</h3>
+          <svg id="profitTrend" width="100%" height="90" viewBox="0 0 600 90" preserveAspectRatio="none"></svg>
+        </div>
+      </section>
+
+      <!-- ---------- TRANSACTIONS ---------- -->
+      <section class="page" id="page-transactions">
+        <div class="page-head">
+          <div><p class="sub">Record income and expenses — or let SmartKhata AI read them for you.</p></div>
+          <button class="btn btn-sm btn-teal" onclick="openTxModal()">+ Add Transaction</button>
+        </div>
+
+        <div class="ai-box">
+          <h3><span class="spark">✦</span> AI Transaction Understanding</h3>
+          <p>Describe a transaction in natural language. SmartKhata AI detects its nature, selects Income or Expense, suggests a category, and extracts the amount.</p>
+          <div class="ai-input-row">
+            <textarea id="aiInput" placeholder="e.g. Paid ₹4,500 for shop rent through UPI"></textarea>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-sm" style="background:#6be0c4; color:#0f2038;" onclick="runAI()">✦ Understand Transaction</button>
+            <button class="btn btn-sm btn-outline" style="background:transparent; color:#cfe0ee; border-color:rgba(255,255,255,.25);" onclick="tryExample()">Try Example</button>
+          </div>
+          <div class="ai-result" id="aiResult">
+            <div class="ai-result-grid">
+              <div><div class="k">Nature</div><div class="v" id="aiNature">—</div></div>
+              <div><div class="k">Type</div><div class="v" id="aiType">—</div></div>
+              <div><div class="k">Category</div><div class="v" id="aiCategory">—</div></div>
+              <div><div class="k">Amount</div><div class="v" id="aiAmount">—</div></div>
+            </div>
+            <div class="toolbar">
+              <button class="btn btn-sm btn-teal" onclick="acceptAI()">✓ Accept AI Classification</button>
+              <button class="btn btn-sm btn-outline" style="background:transparent; color:#cfe0ee; border-color:rgba(255,255,255,.25);" onclick="editAI()">Edit Before Saving</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar" style="justify-content:space-between; margin-bottom:14px;">
+            <h3 style="margin:0;">All transactions</h3>
+            <select class="filter" id="txFilter" onchange="renderTransactions()">
+              <option value="all">All Types</option>
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>ID</th><th>Description</th><th>Type</th><th>Category</th><th>Amount</th><th>Method</th><th>Action</th></tr></thead>
+              <tbody id="txTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- EXPENSES ---------- -->
+      <section class="page" id="page-expenses">
+        <div class="page-head">
+          <div><p class="sub">Track spending by category.</p></div>
+          <button class="btn btn-sm btn-teal" onclick="openExpModal()">+ Add Expense</button>
+        </div>
+        <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+          <div class="stat"><div class="label">Total Expenses</div><div class="value neg" id="expTotal">₹0</div></div>
+          <div class="stat"><div class="label">Highest Category</div><div class="value" style="font-size:18px;" id="expHighest">—</div></div>
+          <div class="stat"><div class="label">This Month</div><div class="value" id="expMonth">₹0</div></div>
+        </div>
+        <div class="panel">
+          <h3>Expense overview</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Method</th><th>Action</th></tr></thead>
+              <tbody id="expTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- INVOICES ---------- -->
+      <section class="page" id="page-invoices">
+        <div class="page-head"><div><p class="sub">Create GST-ready invoices in seconds.</p></div></div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Invoice details</h3>
+            <div class="field-row">
+              <div class="field"><label>Business Name</label><input id="invBizName" value="GreenMart Retail"></div>
+              <div class="field"><label>Business GSTIN</label><input id="invBizGstin" placeholder="03ABCDE1234F1Z5"></div>
+            </div>
+            <div class="field"><label>Business Address</label><input id="invBizAddr" placeholder="Shop 4, Model Town, Amritsar"></div>
+            <div class="field-row">
+              <div class="field"><label>Customer Name</label><input id="invCustName" placeholder="ABC Traders"></div>
+              <div class="field"><label>Customer GSTIN</label><input id="invCustGstin" placeholder="Optional"></div>
+            </div>
+            <div class="field"><label>Customer Address</label><input id="invCustAddr" placeholder="Customer address"></div>
+            <div class="field-row">
+              <div class="field"><label>Invoice Number</label><input id="invNumber" value="INV-1001"></div>
+              <div class="field"><label>Date</label><input type="date" id="invDate"></div>
+            </div>
+
+            <h3 style="margin-top:6px;">Items</h3>
+            <div class="table-wrap">
+              <table class="invoice-items">
+                <thead><tr><th>Product / Service</th><th>Qty</th><th>Unit Price (₹)</th><th>Discount (₹)</th><th></th></tr></thead>
+                <tbody id="invItemsBody"></tbody>
+              </table>
+            </div>
+            <button class="btn btn-sm btn-outline" style="margin-top:8px;" onclick="addInvoiceItem()">+ Add Item</button>
+
+            <div class="field-row" style="margin-top:16px;">
+              <div class="field">
+                <label>GST Rate</label>
+                <select id="invGstRate"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select>
+              </div>
+              <div class="field">
+                <label>Tax Type</label>
+                <select id="invTaxType"><option value="split">CGST + SGST</option><option value="igst">IGST</option></select>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-navy" onclick="calcInvoice()">Calculate</button>
+          </div>
+
+          <div class="panel">
+            <h3 id="invPreviewBizName">GreenMart Retail</h3>
+            <p class="sub" style="margin-bottom:14px;">Invoice Preview</p>
+            <div class="invoice-preview">
+              <div class="kv-grid" style="margin-bottom:14px;">
+                <div><div class="k">Invoice</div><div class="v" id="pvNumber">INV-1001</div></div>
+                <div><div class="k">Date</div><div class="v" id="pvDate">—</div></div>
+              </div>
+              <div class="k" style="margin-bottom:3px;">Bill To</div>
+              <div class="v" id="pvCustomer" style="margin-bottom:14px;">—</div>
+              <div class="table-wrap">
+                <table id="pvItemsTable"><thead><tr><th>Item</th><th>Qty</th><th>Amount</th></tr></thead><tbody></tbody></table>
+              </div>
+              <div style="margin-top:12px;">
+                <div class="inv-total-row"><span>Subtotal</span><span id="pvSubtotal">₹0</span></div>
+                <div class="inv-total-row"><span>Discount</span><span id="pvDiscount">₹0</span></div>
+                <div class="inv-total-row"><span>Taxable</span><span id="pvTaxable">₹0</span></div>
+                <div class="inv-total-row"><span id="pvTaxLabel">CGST + SGST</span><span id="pvTax">₹0</span></div>
+                <div class="inv-total-row grand"><span>Grand Total</span><span id="pvGrand">₹0</span></div>
+              </div>
+            </div>
+            <div class="toolbar" style="margin-top:16px;">
+              <button class="btn btn-sm btn-teal" onclick="saveInvoice()">Save Invoice</button>
+              <button class="btn btn-sm btn-outline" onclick="window.print()">Print Invoice</button>
+              <button class="btn btn-sm btn-outline" onclick="downloadInvoice()">Download HTML</button>
+              <button class="btn btn-sm btn-outline" onclick="toast('Invoice sent (prototype)')">Send Invoice</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- CUSTOMERS ---------- -->
+      <section class="page" id="page-customers">
+        <div class="page-head">
+          <div><p class="sub">Track customers and outstanding receivables.</p></div>
+          <button class="btn btn-sm btn-teal" onclick="openModal('custModal')">+ Add Customer</button>
+        </div>
+        <div class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Total Purchases</th><th>Received</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="custTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- SUPPLIERS ---------- -->
+      <section class="page" id="page-suppliers">
+        <div class="page-head">
+          <div><p class="sub">Track suppliers and outstanding payables.</p></div>
+          <button class="btn btn-sm btn-teal" onclick="openModal('suppModal')">+ Add Supplier</button>
+        </div>
+        <div class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Supplier</th><th>Contact</th><th>Email</th><th>Purchases</th><th>Paid</th><th>Outstanding</th><th>Due Date</th><th>Action</th></tr></thead>
+              <tbody id="suppTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- GST ---------- -->
+      <section class="page" id="page-gst">
+        <div class="page-head"><div><p class="sub">Consolidated GST tracking and calculator.</p></div></div>
+        <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+          <div class="stat"><div class="label">Taxable Sales</div><div class="value" id="gstTaxableSales">₹0</div></div>
+          <div class="stat"><div class="label">Output GST</div><div class="value pos" id="gstOutput">₹0</div></div>
+          <div class="stat"><div class="label">Input GST</div><div class="value warn" id="gstInput">₹0</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>GST calculator</h3>
+            <div class="field"><label>Taxable Value (₹)</label><input type="number" id="gstCalcValue" placeholder="10000"></div>
+            <div class="field">
+              <label>GST Rate</label>
+              <select id="gstCalcRate"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select>
+            </div>
+            <button class="btn btn-sm btn-navy" onclick="calcGST()">Calculate GST</button>
+            <button class="btn btn-sm btn-outline" style="margin-left:8px;" onclick="logInputGST()">Log as Purchase (Input GST)</button>
+          </div>
+          <div class="panel">
+            <h3>GST summary</h3>
+            <div class="inv-total-row"><span>CGST</span><span id="gstCgst">₹0</span></div>
+            <div class="inv-total-row"><span>SGST</span><span id="gstSgst">₹0</span></div>
+            <div class="inv-total-row"><span>IGST</span><span id="gstIgst">₹0</span></div>
+            <div class="inv-total-row grand"><span>Net GST Payable</span><span id="gstNet">₹0</span></div>
+          </div>
+        </div>
+        <p class="empty-note">Disclaimer: GST calculations shown are for prototype/accounting-assistance purposes and should be verified before statutory filing.</p>
+      </section>
+
+      <!-- ---------- REPORTS ---------- -->
+      <section class="page" id="page-reports">
+        <div class="page-head">
+          <div><p class="sub">Financial statements generated from your recorded data.</p></div>
+          <select class="period-select" id="reportPeriod" onchange="renderReports()">
+            <option value="all">All Time</option>
+            <option value="daily">Daily</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Profit & Loss statement</h3>
+            <div class="inv-total-row"><span>Revenue</span><span id="repRevenue">₹0</span></div>
+            <div class="inv-total-row"><span>Expenses</span><span id="repExpenses">₹0</span></div>
+            <div class="inv-total-row grand"><span>Net Profit</span><span id="repProfit">₹0</span></div>
+          </div>
+          <div class="panel">
+            <h3>Cash flow statement</h3>
+            <div class="inv-total-row"><span>Cash Inflow</span><span id="repInflow">₹0</span></div>
+            <div class="inv-total-row"><span>Cash Outflow</span><span id="repOutflow">₹0</span></div>
+            <div class="inv-total-row grand"><span>Net Cash Flow</span><span id="repNetCash">₹0</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Sales report</h3>
+          <p class="sub" style="margin-bottom:10px;">Revenue generated from recorded income transactions.</p>
+          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead><tbody id="repSalesBody"></tbody></table></div>
+        </div>
+        <div class="panel">
+          <h3>Expense report</h3>
+          <p class="sub" style="margin-bottom:10px;">Expenses grouped by accounting category.</p>
+          <div id="repExpenseCats"></div>
+        </div>
+        <div class="panel">
+          <h3>Receivables report</h3>
+          <p class="sub" style="margin-bottom:10px;">Outstanding customer balances.</p>
+          <div class="table-wrap"><table><thead><tr><th>Customer</th><th>Outstanding</th><th>Status</th></tr></thead><tbody id="repReceivablesBody"></tbody></table></div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-sm btn-outline" onclick="window.print()">Print Report</button>
+          <button class="btn btn-sm btn-outline" onclick="toast('Report downloaded (prototype)')">Download Report</button>
+        </div>
+      </section>
+
+      <!-- ---------- AI INSIGHTS ---------- -->
+      <section class="page" id="page-insights">
+        <div class="page-head"><div><p class="sub">✦ AI-powered prototype insights.</p></div></div>
+        <div class="panel">
+          <h3>Cash flow forecast</h3>
+          <div class="field-row" style="margin-bottom:14px;">
+            <div class="field"><label>Expected Monthly Income (₹)</label><input type="number" id="fcIncome" placeholder="e.g. 60000"></div>
+            <div class="field"><label>Expected Monthly Expenses (₹)</label><input type="number" id="fcExpense" placeholder="e.g. 38000"></div>
+          </div>
+          <button class="btn btn-sm btn-navy" onclick="runForecast()">Generate Forecast</button>
+          <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-top:18px;">
+            <div class="stat"><div class="label">Current Cash</div><div class="value" id="fcCurrent">₹0</div></div>
+            <div class="stat"><div class="label">Expected Income</div><div class="value pos" id="fcExpIncome">₹0</div></div>
+            <div class="stat"><div class="label">Expected Expenses</div><div class="value neg" id="fcExpExpense">₹0</div></div>
+            <div class="stat"><div class="label">Projected Cash (6M)</div><div class="value" id="fcProjected">₹0</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>6-month forecast</h3>
+          <div class="forecast-chart" id="forecastChart"></div>
+          <p class="empty-note" style="margin-top:10px;">Forecast uses a straight-line projection of your entered monthly income and expenses. It is a prototype, not a financial prediction.</p>
+        </div>
+      </section>
+
+      <!-- ---------- SETTINGS ---------- -->
+      <section class="page" id="page-settings">
+        <div class="page-head"><div><p class="sub">Manage your business profile and preferences.</p></div></div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Business profile</h3>
+            <div class="field"><label>Business Name</label><input id="setBizName" value="GreenMart Retail"></div>
+            <div class="field"><label>Address</label><input id="setBizAddr" placeholder="Shop 4, Model Town, Amritsar"></div>
+            <div class="field"><label>GSTIN</label><input id="setBizGstin" placeholder="03ABCDE1234F1Z5"></div>
+            <div class="field-row">
+              <div class="field"><label>Phone</label><input id="setBizPhone" placeholder="+91 98xxxxxx"></div>
+              <div class="field"><label>Email</label><input id="setBizEmail" placeholder="owner@business.in"></div>
+            </div>
+            <button class="btn btn-sm btn-teal" onclick="saveSettings()">Save Settings</button>
+          </div>
+          <div class="panel">
+            <h3>Preferences & security</h3>
+            <div class="field"><label>Currency</label><select id="setCurrency"><option>₹ INR</option><option>$ USD</option></select></div>
+            <div class="field"><label>Date Format</label><select id="setDateFormat"><option>DD-MM-YYYY</option><option>MM-DD-YYYY</option></select></div>
+            <div class="settings-row">
+              <div><div class="t">Two-Factor Authentication</div><div class="d">Add an extra layer of login security.</div></div>
+              <label class="toggle"><input type="checkbox" id="set2fa"><span class="track"></span></label>
+            </div>
+            <div class="settings-row">
+              <div><div class="t">Export Data</div><div class="d">Download all records as a JSON file.</div></div>
+              <button class="btn btn-sm btn-outline" onclick="exportData()">Export</button>
+            </div>
+            <div class="settings-row">
+              <div><div class="t">Clear Demo Data</div><div class="d">Reset the workspace to a blank state.</div></div>
+              <button class="btn btn-sm" style="background:var(--danger-light); color:var(--danger);" onclick="clearDemoData()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+<div class="modal-overlay" id="txModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Transaction</h3><button class="modal-close" onclick="closeModal('txModal')">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Date</label><input type="date" id="txDate"></div>
+      <div class="field"><label>Description</label><input id="txDesc" placeholder="e.g. Sold goods to ABC Traders"></div>
+      <div class="field-row">
+        <div class="field"><label>Type</label><select id="txType" onchange="fillCategoryOptions()"><option value="Income">Income</option><option value="Expense">Expense</option></select></div>
+        <div class="field"><label>Category</label><select id="txCategory"></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Amount (₹)</label><input type="number" id="txAmount" placeholder="0"></div>
+        <div class="field"><label>Payment Method</label><select id="txMethod"><option>UPI</option><option>Bank Transfer</option><option>Cash</option><option>Card</option></select></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('txModal')">Cancel</button>
+        <button class="btn btn-teal" onclick="saveTransaction()">Save Transaction</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="expModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Expense</h3><button class="modal-close" onclick="closeModal('expModal')">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Date</label><input type="date" id="expDate"></div>
+      <div class="field"><label>Description</label><input id="expDesc" placeholder="e.g. Monthly shop rent"></div>
+      <div class="field-row">
+        <div class="field"><label>Category</label>
+          <select id="expCategory"><option>Rent</option><option>Salary</option><option>Marketing</option><option>Transportation</option><option>Inventory</option><option>Office Supplies</option><option>Electricity</option><option>Internet</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="expAmount" placeholder="0"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Payment Method</label><select id="expMethod"><option>UPI</option><option>Bank Transfer</option><option>Cash</option><option>Card</option></select></div>
+        <div class="field"><label>Receipt (optional)</label><input type="text" id="expReceipt" placeholder="File name"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('expModal')">Cancel</button>
+        <button class="btn btn-teal" onclick="saveExpense()">Save Expense</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="custModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Customer</h3><button class="modal-close" onclick="closeModal('custModal')">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Name</label><input id="custName" placeholder="Customer / business name"></div>
+      <div class="field-row">
+        <div class="field"><label>Phone</label><input id="custPhone" placeholder="+91 98xxxxxx"></div>
+        <div class="field"><label>Email</label><input id="custEmail" placeholder="name@email.com"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Total Purchases (₹)</label><input type="number" id="custTotal" placeholder="0"></div>
+        <div class="field"><label>Received (₹)</label><input type="number" id="custReceived" placeholder="0"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('custModal')">Cancel</button>
+        <button class="btn btn-teal" onclick="saveCustomer()">Save Customer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="suppModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Supplier</h3><button class="modal-close" onclick="closeModal('suppModal')">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Name</label><input id="suppName" placeholder="Supplier name"></div>
+      <div class="field-row">
+        <div class="field"><label>Contact</label><input id="suppContact" placeholder="+91 98xxxxxx"></div>
+        <div class="field"><label>Email</label><input id="suppEmail" placeholder="name@email.com"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Purchases (₹)</label><input type="number" id="suppTotal" placeholder="0"></div>
+        <div class="field"><label>Paid (₹)</label><input type="number" id="suppPaid" placeholder="0"></div>
+      </div>
+      <div class="field"><label>Due Date</label><input type="date" id="suppDue"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('suppModal')">Cancel</button>
+        <button class="btn btn-teal" onclick="saveSupplier()">Save Supplier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   SmartKhata AI — prototype application logic (in-memory demo)
+   ============================================================ */
+
+const CATEGORY_KEYWORDS = {
+  Sales:        ["sold","sale","sales","revenue","customer payment","payment received","received from"],
+  Rent:         ["rent"],
+  Marketing:    ["marketing","ad ","advert","promotion","campaign"],
+  "Office Supplies": ["stationery","office supplies","supplies","printer","paper"],
+  Transportation:    ["fuel","transport","delivery","freight","uber","taxi","petrol","diesel","courier"],
+  Inventory:    ["inventory","stock","raw material","purchased goods","purchase of goods"],
+  Salary:       ["salary","wages","staff payment","payroll"],
+  Electricity:  ["electricity","power bill","utility","utilities"],
+};
+const EXPENSE_HINTS = ["paid","purchase","purchased","bought","bill","expense","spent","payment for","paying"];
+const INCOME_HINTS  = ["received","sold","sale","income","payment from","credited","earned"];
+
+let state = {
+  bizName: "GreenMart Retail",
+  transactions: [],
+  customers: [],
+  suppliers: [],
+  profitHistory: [],
+  nextTxId: 1,
+  gstOutput: 0,
+  gstInput: 0,
+  gstTaxableSales: 0,
+};
+let aiDraft = null;
+let invoiceItemCount = 0;
+
+/* ---------------- Login / logout ---------------- */
+function doLogin(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  seedDemoData();
+  renderAll();
+}
+function doLogout(){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+/* ---------------- Navigation ---------------- */
+document.querySelectorAll('.nav-item[data-page]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const page = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    document.getElementById('pageTitle').textContent = btn.textContent.trim();
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+/* ---------------- Toast ---------------- */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ---------------- Modal helpers ---------------- */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function openTxModal(){
+  document.getElementById('txDate').value = todayStr();
+  document.getElementById('txDesc').value='';
+  document.getElementById('txAmount').value='';
+  fillCategoryOptions();
+  openModal('txModal');
+}
+function openExpModal(){
+  document.getElementById('expDate').value = todayStr();
+  document.getElementById('expDesc').value='';
+  document.getElementById('expAmount').value='';
+  openModal('expModal');
+}
+function fillCategoryOptions(){
+  const type = document.getElementById('txType').value;
+  const sel = document.getElementById('txCategory');
+  const cats = type==='Income' ? ['Sales','Other'] : Object.keys(CATEGORY_KEYWORDS).filter(c=>c!=='Sales').concat('Other');
+  sel.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+}
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function fmt(n){
+  n = Number(n)||0;
+  return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:0});
+}
+
+/* ---------------- AI classifier ---------------- */
+function classify(text){
+  const lower = text.toLowerCase();
+  let type = 'Expense';
+  if (INCOME_HINTS.some(k=>lower.includes(k))) type = 'Income';
+  if (EXPENSE_HINTS.some(k=>lower.includes(k))) type = 'Expense';
+
+  let category = 'Other';
+  for (const [cat, keys] of Object.entries(CATEGORY_KEYWORDS)){
+    if (keys.some(k=>lower.includes(k))){ category = cat; break; }
+  }
+  if (type==='Income' && category!=='Sales' && category==='Other') category='Sales';
+
+  const amtMatch = lower.replace(/,/g,'').match(/(?:₹|rs\.?|inr)?\s?(\d+(\.\d+)?)/);
+  const amount = amtMatch ? parseFloat(amtMatch[1]) : 0;
+
+  const nature = type==='Income' ? 'Revenue transaction' : 'Business expense';
+  return { nature, type, category, amount };
+}
+function runAI(){
+  const text = document.getElementById('aiInput').value.trim();
+  if (!text){ toast('Describe a transaction first'); return; }
+  aiDraft = classify(text);
+  aiDraft.desc = text;
+  document.getElementById('aiNature').textContent = aiDraft.nature;
+  document.getElementById('aiType').textContent = aiDraft.type;
+  document.getElementById('aiCategory').textContent = aiDraft.category;
+  document.getElementById('aiAmount').textContent = fmt(aiDraft.amount);
+  document.getElementById('aiResult').classList.add('show');
+}
+function tryExample(){
+  const examples = [
+    "Received ₹15,000 from ABC Traders for retail goods sold",
+    "Paid ₹4,500 for shop rent through UPI",
+    "Purchased inventory worth ₹9,200 from supplier via bank transfer",
+    "Paid ₹2,100 electricity bill for the shop"
+  ];
+  document.getElementById('aiInput').value = examples[Math.floor(Math.random()*examples.length)];
+  runAI();
+}
+function acceptAI(){
+  if (!aiDraft) return;
+  addTransaction({
+    date: todayStr(), description: aiDraft.desc, type: aiDraft.type,
+    category: aiDraft.category, amount: aiDraft.amount, method: 'UPI'
+  });
+  document.getElementById('aiInput').value='';
+  document.getElementById('aiResult').classList.remove('show');
+  toast('Transaction added from AI classification');
+}
+function editAI(){
+  if (!aiDraft) return;
+  document.getElementById('txDate').value = todayStr();
+  document.getElementById('txDesc').value = aiDraft.desc;
+  document.getElementById('txType').value = aiDraft.type;
+  fillCategoryOptions();
+  document.getElementById('txCategory').value = aiDraft.category;
+  document.getElementById('txAmount').value = aiDraft.amount;
+  openModal('txModal');
+}
+
+/* ---------------- Transactions ---------------- */
+function addTransaction(tx){
+  tx.id = 'TXN' + String(1000+state.nextTxId); state.nextTxId++;
+  state.transactions.unshift(tx);
+  const profit = totalIncome() - totalExpense();
+  state.profitHistory.push(profit);
+  if (state.profitHistory.length>12) state.profitHistory.shift();
+  renderAll();
+}
+function saveTransaction(){
+  const date = document.getElementById('txDate').value || todayStr();
+  const description = document.getElementById('txDesc').value.trim();
+  const type = document.getElementById('txType').value;
+  const category = document.getElementById('txCategory').value;
+  const amount = parseFloat(document.getElementById('txAmount').value)||0;
+  const method = document.getElementById('txMethod').value;
+  if (!description || amount<=0){ toast('Enter a description and amount'); return; }
+  addTransaction({date, description, type, category, amount, method});
+  closeModal('txModal');
+  toast('Transaction saved');
+}
+function deleteTx(id){
+  state.transactions = state.transactions.filter(t=>t.id!==id);
+  renderAll();
+}
+function saveExpense(){
+  const date = document.getElementById('expDate').value || todayStr();
+  const description = document.getElementById('expDesc').value.trim();
+  const category = document.getElementById('expCategory').value;
+  const amount = parseFloat(document.getElementById('expAmount').value)||0;
+  const method = document.getElementById('expMethod').value;
+  if (!description || amount<=0){ toast('Enter a description and amount'); return; }
+  addTransaction({date, description, type:'Expense', category, amount, method});
+  closeModal('expModal');
+  toast('Expense saved');
+}
+
+function totalIncome(){ return state.transactions.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0); }
+function totalExpense(){ return state.transactions.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0); }
+function totalReceivables(){ return state.customers.reduce((s,c)=>s+Math.max(c.total-c.received,0),0); }
+function totalPayables(){ return state.suppliers.reduce((s,c)=>s+Math.max(c.total-c.paid,0),0); }
+
+/* ---------------- Render: Dashboard ---------------- */
+function renderDashboard(){
+  const rev = totalIncome(), exp = totalExpense(), profit = rev-exp;
+  document.getElementById('statRevenue').textContent = fmt(rev);
+  document.getElementById('statExpenses').textContent = fmt(exp);
+  const profitEl = document.getElementById('statProfit');
+  profitEl.textContent = fmt(profit);
+  profitEl.className = 'value ' + (profit>=0?'pos':'neg');
+  document.getElementById('statReceivables').textContent = fmt(totalReceivables());
+  document.getElementById('statPayables').textContent = fmt(totalPayables());
+  document.getElementById('statCash').textContent = fmt(rev-exp);
+
+  const max = Math.max(rev, exp, 1);
+  document.getElementById('revExpChart').innerHTML = `
+    <div class="bar-wrap"><div class="bar-val">${fmt(rev)}</div><div class="bar rev" style="height:${Math.max(rev/max*120,4)}px"></div><div class="bar-label">Revenue</div></div>
+    <div class="bar-wrap"><div class="bar-val">${fmt(exp)}</div><div class="bar exp" style="height:${Math.max(exp/max*120,4)}px"></div><div class="bar-label">Expenses</div></div>
+  `;
+
+  const cats = {};
+  state.transactions.filter(t=>t.type==='Expense').forEach(t=>{ cats[t.category]=(cats[t.category]||0)+t.amount; });
+  const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const catEl = document.getElementById('expCatChart');
+  if (!entries.length){ catEl.innerHTML = '<p class="empty-note">Add an expense to see the breakdown.</p>'; }
+  else {
+    const catMax = entries[0][1];
+    catEl.innerHTML = entries.map(([name,val])=>`
+      <div class="hbar-row"><div class="name">${name}</div><div class="hbar-track"><div class="hbar-fill" style="width:${val/catMax*100}%"></div></div><div class="amt">${fmt(val)}</div></div>
+    `).join('');
+  }
+
+  const svg = document.getElementById('profitTrend');
+  const pts = state.profitHistory.length ? state.profitHistory : [0];
+  const pmax = Math.max(...pts.map(Math.abs),1);
+  const step = 600/Math.max(pts.length-1,1);
+  const coords = pts.map((v,i)=> `${i*step},${45 - (v/pmax)*38}`).join(' ');
+  svg.innerHTML = `<polyline points="${coords}" fill="none" stroke="#1f7a6c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="0" y1="45" x2="600" y2="45" stroke="#e3e9ef" stroke-width="1"/>`;
+}
+
+/* ---------------- Render: Transactions ---------------- */
+function renderTransactions(){
+  const filter = document.getElementById('txFilter').value;
+  const list = state.transactions.filter(t=> filter==='all' || t.type===filter);
+  const body = document.getElementById('txTableBody');
+  body.innerHTML = list.length ? list.map(t=>`
+    <tr>
+      <td>${t.date}</td><td>${t.id}</td><td>${t.description}</td>
+      <td><span class="badge ${t.type.toLowerCase()}">${t.type}</span></td>
+      <td>${t.category}</td><td>${fmt(t.amount)}</td><td>${t.method}</td>
+      <td><button class="link-del" onclick="deleteTx('${t.id}')">Delete</button></td>
+    </tr>`).join('') : `<tr><td colspan="8" class="empty-note">No transactions yet — add one above or try the AI assistant.</td></tr>`;
+}
+
+/* ---------------- Render: Expenses ---------------- */
+function renderExpenses(){
+  const list = state.transactions.filter(t=>t.type==='Expense');
+  const total = list.reduce((s,t)=>s+t.amount,0);
+  document.getElementById('expTotal').textContent = fmt(total);
+  const cats = {};
+  list.forEach(t=>cats[t.category]=(cats[t.category]||0)+t.amount);
+  const top = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('expHighest').textContent = top ? top[0] : '—';
+  const monthNow = new Date().toISOString().slice(0,7);
+  const monthTotal = list.filter(t=>t.date.startsWith(monthNow)).reduce((s,t)=>s+t.amount,0);
+  document.getElementById('expMonth').textContent = fmt(monthTotal);
+
+  const body = document.getElementById('expTableBody');
+  body.innerHTML = list.length ? list.map(t=>`
+    <tr><td>${t.date}</td><td>${t.description}</td><td>${t.category}</td><td>${fmt(t.amount)}</td><td>${t.method}</td>
+    <td><button class="link-del" onclick="deleteTx('${t.id}')">Delete</button></td></tr>`).join('')
+    : `<tr><td colspan="6" class="empty-note">No expenses recorded yet.</td></tr>`;
+}
+
+/* ---------------- Invoices ---------------- */
+function addInvoiceItem(prefill){
+  invoiceItemCount++;
+  const id = 'item'+invoiceItemCount;
+  const row = document.createElement('tr');
+  row.id = id;
+  row.innerHTML = `
+    <td><input placeholder="Product / service" class="it-name" value="${prefill?prefill.name:''}"></td>
+    <td><input type="number" class="it-qty" value="${prefill?prefill.qty:1}" style="width:60px;"></td>
+    <td><input type="number" class="it-price" value="${prefill?prefill.price:''}" style="width:90px;"></td>
+    <td><input type="number" class="it-disc" value="${prefill?prefill.disc:0}" style="width:80px;"></td>
+    <td><button class="item-remove" onclick="document.getElementById('${id}').remove()">✕</button></td>`;
+  document.getElementById('invItemsBody').appendChild(row);
+}
+function calcInvoice(){
+  const rows = [...document.querySelectorAll('#invItemsBody tr')];
+  if (!rows.length){ toast('Add at least one item'); return; }
+  let subtotal=0, discount=0;
+  const items = rows.map(r=>{
+    const name = r.querySelector('.it-name').value || 'Item';
+    const qty = parseFloat(r.querySelector('.it-qty').value)||0;
+    const price = parseFloat(r.querySelector('.it-price').value)||0;
+    const disc = parseFloat(r.querySelector('.it-disc').value)||0;
+    const lineAmt = qty*price - disc;
+    subtotal += qty*price; discount += disc;
+    return {name, qty, amount:lineAmt};
+  });
+  const taxable = subtotal-discount;
+  const rate = parseFloat(document.getElementById('invGstRate').value);
+  const taxType = document.getElementById('invTaxType').value;
+  const tax = taxable*rate/100;
+  const grand = taxable+tax;
+
+  document.getElementById('pvNumber').textContent = document.getElementById('invNumber').value || 'INV-1001';
+  document.getElementById('pvDate').textContent = document.getElementById('invDate').value || todayStr();
+  document.getElementById('pvCustomer').textContent = document.getElementById('invCustName').value || '—';
+  document.getElementById('pvItemsTable').querySelector('tbody').innerHTML =
+    items.map(i=>`<tr><td>${i.name}</td><td>${i.qty}</td><td>${fmt(i.amount)}</td></tr>`).join('');
+  document.getElementById('pvSubtotal').textContent = fmt(subtotal);
+  document.getElementById('pvDiscount').textContent = fmt(discount);
+  document.getElementById('pvTaxable').textContent = fmt(taxable);
+  document.getElementById('pvTaxLabel').textContent = taxType==='split' ? 'CGST + SGST' : 'IGST';
+  document.getElementById('pvTax').textContent = fmt(tax);
+  document.getElementById('pvGrand').textContent = fmt(grand);
+  document.getElementById('invPreviewBizName').textContent = document.getElementById('invBizName').value || 'Your Business';
+
+  window._currentInvoice = {items, subtotal, discount, taxable, rate, taxType, tax, grand,
+    number:document.getElementById('invNumber').value, date:document.getElementById('invDate').value||todayStr(),
+    customer:document.getElementById('invCustName').value||'Walk-in Customer'};
+}
+function saveInvoice(){
+  if (!window._currentInvoice){ toast('Calculate the invoice first'); return; }
+  const inv = window._currentInvoice;
+  addTransaction({date:inv.date, description:'Invoice '+inv.number+' — '+inv.customer, type:'Income', category:'Sales', amount:inv.grand, method:'Bank Transfer'});
+  state.gstTaxableSales += inv.taxable;
+  state.gstOutput += inv.tax;
+  renderGST();
+  toast('Invoice saved and added to transactions');
+}
+function downloadInvoice(){
+  if (!window._currentInvoice){ toast('Calculate the invoice first'); return; }
+  const inv = window._currentInvoice;
+  const html = `<html><head><meta charset="utf-8"><title>${inv.number}</title></head><body style="font-family:sans-serif;padding:30px;">
+    <h2>${document.getElementById('invBizName').value}</h2>
+    <p>Invoice: ${inv.number} | Date: ${inv.date}</p>
+    <p>Bill To: ${inv.customer}</p>
+    <table border="1" cellpadding="8" style="border-collapse:collapse;width:100%;">
+      <tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
+      ${inv.items.map(i=>`<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.amount}</td></tr>`).join('')}
+    </table>
+    <p>Subtotal: ₹${inv.subtotal}<br>Discount: ₹${inv.discount}<br>Taxable: ₹${inv.taxable}<br>
+    ${inv.taxType==='split'?'CGST+SGST':'IGST'}: ₹${inv.tax.toFixed(2)}<br>
+    <b>Grand Total: ₹${inv.grand.toFixed(2)}</b></p></body></html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = inv.number+'.html';
+  a.click();
+  toast('Invoice downloaded');
+}
+
+/* ---------------- Customers ---------------- */
+function saveCustomer(){
+  const name = document.getElementById('custName').value.trim();
+  if (!name){ toast('Enter a customer name'); return; }
+  const total = parseFloat(document.getElementById('custTotal').value)||0;
+  const received = parseFloat(document.getElementById('custReceived').value)||0;
+  state.customers.push({name, phone:document.getElementById('custPhone').value, email:document.getElementById('custEmail').value, total, received});
+  ['custName','custPhone','custEmail','custTotal','custReceived'].forEach(id=>document.getElementById(id).value='');
+  closeModal('custModal'); renderCustomers(); renderDashboard();
+  toast('Customer added');
+}
+function deleteCustomer(i){ state.customers.splice(i,1); renderCustomers(); renderDashboard(); }
+function renderCustomers(){
+  const body = document.getElementById('custTableBody');
+  body.innerHTML = state.customers.length ? state.customers.map((c,i)=>{
+    const out = Math.max(c.total-c.received,0);
+    const status = out<=0 ? ['Paid','paid'] : (c.received>0 ? ['Partial','partial'] : ['Pending','pending']);
+    return `<tr><td>${c.name}</td><td>${c.phone||'—'}</td><td>${c.email||'—'}</td><td>${fmt(c.total)}</td><td>${fmt(c.received)}</td><td>${fmt(out)}</td>
+      <td><span class="badge ${status[1]}">${status[0]}</span></td><td><button class="link-del" onclick="deleteCustomer(${i})">Delete</button></td></tr>`;
+  }).join('') : `<tr><td colspan="8" class="empty-note">No customers added yet.</td></tr>`;
+}
+
+/* ---------------- Suppliers ---------------- */
+function saveSupplier(){
+  const name = document.getElementById('suppName').value.trim();
+  if (!name){ toast('Enter a supplier name'); return; }
+  const total = parseFloat(document.getElementById('suppTotal').value)||0;
+  const paid = parseFloat(document.getElementById('suppPaid').value)||0;
+  state.suppliers.push({name, contact:document.getElementById('suppContact').value, email:document.getElementById('suppEmail').value, total, paid, due:document.getElementById('suppDue').value});
+  ['suppName','suppContact','suppEmail','suppTotal','suppPaid','suppDue'].forEach(id=>document.getElementById(id).value='');
+  closeModal('suppModal'); renderSuppliers(); renderDashboard();
+  toast('Supplier added');
+}
+function deleteSupplier(i){ state.suppliers.splice(i,1); renderSuppliers(); renderDashboard(); }
+function renderSuppliers(){
+  const body = document.getElementById('suppTableBody');
+  body.innerHTML = state.suppliers.length ? state.suppliers.map((s,i)=>{
+    const out = Math.max(s.total-s.paid,0);
+    const status = out<=0 ? ['Paid','paid'] : (s.paid>0 ? ['Partial','partial'] : ['Pending','pending']);
+    return `<tr><td>${s.name}</td><td>${s.contact||'—'}</td><td>${s.email||'—'}</td><td>${fmt(s.total)}</td><td>${fmt(s.paid)}</td><td>${fmt(out)}</td>
+      <td>${s.due||'—'} <span class="badge ${status[1]}">${status[0]}</span></td><td><button class="link-del" onclick="deleteSupplier(${i})">Delete</button></td></tr>`;
+  }).join('') : `<tr><td colspan="8" class="empty-note">No suppliers added yet.</td></tr>`;
+}
+
+/* ---------------- GST ---------------- */
+function calcGST(){
+  const val = parseFloat(document.getElementById('gstCalcValue').value)||0;
+  const rate = parseFloat(document.getElementById('gstCalcRate').value);
+  const tax = val*rate/100;
+  window._lastGstCalc = {val, rate, tax};
+  document.getElementById('gstCgst').textContent = fmt(tax/2);
+  document.getElementById('gstSgst').textContent = fmt(tax/2);
+  document.getElementById('gstIgst').textContent = fmt(tax);
+  document.getElementById('gstNet').textContent = fmt(state.gstOutput - state.gstInput);
+}
+function logInputGST(){
+  if (!window._lastGstCalc){ toast('Calculate GST first'); return; }
+  state.gstInput += window._lastGstCalc.tax;
+  renderGST();
+  toast('Logged as input GST (purchase)');
+}
+function renderGST(){
+  document.getElementById('gstTaxableSales').textContent = fmt(state.gstTaxableSales);
+  document.getElementById('gstOutput').textContent = fmt(state.gstOutput);
+  document.getElementById('gstInput').textContent = fmt(state.gstInput);
+  document.getElementById('gstNet').textContent = fmt(state.gstOutput - state.gstInput);
+}
+
+/* ---------------- Reports ---------------- */
+function renderReports(){
+  const period = document.getElementById('reportPeriod').value;
+  const now = new Date();
+  const inRange = (dateStr)=>{
+    if (period==='all') return true;
+    const d = new Date(dateStr);
+    if (isNaN(d)) return true;
+    if (period==='daily') return dateStr===todayStr();
+    if (period==='monthly') return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+    if (period==='quarterly') return d.getFullYear()===now.getFullYear() && Math.floor(d.getMonth()/3)===Math.floor(now.getMonth()/3);
+    if (period==='yearly') return d.getFullYear()===now.getFullYear();
+    return true;
+  };
+  const list = state.transactions.filter(t=>inRange(t.date));
+  const rev = list.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
+  const exp = list.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0);
+  document.getElementById('repRevenue').textContent = fmt(rev);
+  document.getElementById('repExpenses').textContent = fmt(exp);
+  document.getElementById('repProfit').textContent = fmt(rev-exp);
+  document.getElementById('repInflow').textContent = fmt(rev);
+  document.getElementById('repOutflow').textContent = fmt(exp);
+  document.getElementById('repNetCash').textContent = fmt(rev-exp);
+
+  const sales = list.filter(t=>t.type==='Income');
+  document.getElementById('repSalesBody').innerHTML = sales.length ? sales.map(t=>
+    `<tr><td>${t.date}</td><td>${t.description}</td><td>${t.category}</td><td>${fmt(t.amount)}</td></tr>`).join('')
+    : `<tr><td colspan="4" class="empty-note">No income recorded for this period.</td></tr>`;
+
+  const cats = {};
+  list.filter(t=>t.type==='Expense').forEach(t=>cats[t.category]=(cats[t.category]||0)+t.amount);
+  const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('repExpenseCats').innerHTML = entries.length ? entries.map(([n,v])=>
+    `<div class="hbar-row"><div class="name">${n}</div><div class="hbar-track"><div class="hbar-fill" style="width:${v/entries[0][1]*100}%"></div></div><div class="amt">${fmt(v)}</div></div>`).join('')
+    : '<p class="empty-note">No expenses recorded for this period.</p>';
+
+  document.getElementById('repReceivablesBody').innerHTML = state.customers.length ? state.customers.map(c=>{
+    const out = Math.max(c.total-c.received,0);
+    const status = out<=0?'Paid':(c.received>0?'Partial':'Pending');
+    return `<tr><td>${c.name}</td><td>${fmt(out)}</td><td>${status}</td></tr>`;
+  }).join('') : `<tr><td colspan="3" class="empty-note">No customer records yet.</td></tr>`;
+}
+
+/* ---------------- AI Insights / Forecast ---------------- */
+function runForecast(){
+  const income = parseFloat(document.getElementById('fcIncome').value)||0;
+  const expense = parseFloat(document.getElementById('fcExpense').value)||0;
+  const current = totalIncome()-totalExpense();
+  document.getElementById('fcCurrent').textContent = fmt(current);
+  document.getElementById('fcExpIncome').textContent = fmt(income);
+  document.getElementById('fcExpExpense').textContent = fmt(expense);
+
+  let cash = current;
+  const values = [];
+  for (let m=1; m<=6; m++){ cash += (income-expense); values.push(cash); }
+  document.getElementById('fcProjected').textContent = fmt(values[values.length-1]);
+
+  const max = Math.max(...values.map(Math.abs), 1);
+  document.getElementById('forecastChart').innerHTML = values.map((v,i)=>`
+    <div class="bar-wrap" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div class="bar-val" style="font-size:11px;color:var(--navy);font-weight:700;">${fmt(v)}</div>
+      <div class="bar" style="height:${Math.max(Math.abs(v)/max*100,4)}px;"></div>
+      <div class="bar-label" style="font-size:11px;color:var(--muted);">M${i+1}</div>
+    </div>`).join('');
+}
+
+/* ---------------- Settings ---------------- */
+function saveSettings(){
+  state.bizName = document.getElementById('setBizName').value || state.bizName;
+  document.getElementById('topBizName').textContent = state.bizName;
+  toast('Settings saved');
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'smartkhata_data.json';
+  a.click();
+  toast('Data exported');
+}
+function clearDemoData(){
+  if (!confirm('Clear all demo data? This cannot be undone.')) return;
+  state.transactions=[]; state.customers=[]; state.suppliers=[]; state.profitHistory=[];
+  state.gstOutput=0; state.gstInput=0; state.gstTaxableSales=0;
+  renderAll();
+  toast('Demo data cleared');
+}
+
+/* ---------------- Seed + render all ---------------- */
+function seedDemoData(){
+  if (state.transactions.length) return; // already seeded
+  const d = todayStr();
+  addTransaction({date:d, description:'Sold retail goods to ABC Traders', type:'Income', category:'Sales', amount:22000, method:'UPI'});
+  addTransaction({date:d, description:'Paid monthly shop rent', type:'Expense', category:'Rent', amount:9000, method:'Bank Transfer'});
+  addTransaction({date:d, description:'Purchased inventory stock', type:'Expense', category:'Inventory', amount:12500, method:'Bank Transfer'});
+  addTransaction({date:d, description:'Staff salary payment', type:'Expense', category:'Salary', amount:8000, method:'Cash'});
+  state.customers.push({name:'ABC Traders', phone:'+91 98765 43210', email:'accounts@abctraders.in', total:35000, received:0});
+  state.suppliers.push({name:'Punjab Wholesale Co.', contact:'+91 91234 56780', email:'sales@pwc.in', total:20000, paid:0, due:d});
+  state.gstTaxableSales = 22000; state.gstOutput = 22000*0.18; state.gstInput = 12500*0.18;
+  addInvoiceItem({name:'Retail Goods', qty:1, price:10000, disc:0});
+  document.getElementById('invDate').value = d;
+  document.getElementById('expDate').value = d;
+}
+function renderAll(){
+  renderDashboard(); renderTransactions(); renderExpenses();
+  renderCustomers(); renderSuppliers(); renderGST(); renderReports();
+}
+</script>
+</body>
+</html>
